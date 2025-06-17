@@ -132,6 +132,7 @@ class TestProduct:
         selenium.wait_and_send_keys((By.ID, "metaKeywords"), product_data['meta_keywords'])
         selenium.wait_and_send_keys((By.ID, "meta_description"), product_data['meta_description'])
 
+        #test git
         # Upload d'image
         image_path = os.path.abspath(product_data['image'])
         file_input = selenium.wait_for_element((By.CSS_SELECTOR, "input[type='file']"))
