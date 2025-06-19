@@ -2,19 +2,11 @@
 
 # Ici on inclut les librairies requises
 
-Library    SeleniumLibrary
 Library    OperatingSystem
-Test Setup    Open Browser    http://localhost:3000/    chrome
-Test Teardown    Close Browser
+Resource    login_admin.robot
+Resource    variables_environnement.robot
 
 *** Variables ***
-#Données de login
-${URL}         http://localhost:3000/admin/login
-${USER}        admin@mail.com
-${PASSWORD}    admin123
-
-${NEW_PRODUCT_URL}   http://localhost:3000/admin/products/new
-${PRODUCTS_URL}   http://localhost:3000/admin/products
 
 # Données produit pour la création
 ${P_NAME}            Chaussette
@@ -28,34 +20,17 @@ ${P_META_KEYWORDS}   sock
 ${P_META_DESC}       sock
 ${P_IMAGE}           C:/Tools/Tests_Selenium/Evershop/Images/sock.png
 
-*** Test Cases ***
-
-Test
-    Créer produit
-
 *** Keywords ***
-Login Success
-    Go To    ${URL}
-    Input Text      name=email    ${USER}
-    Input Text      name=password    ${PASSWORD}
-    Click Button    css: .button.primary
-    Wait Until Page Contains     Dashboard
-
-Login Fail
-    Go To    ${URL}
-    Input Text      name=email    ${USER}
-    Input Text      name=password    password
-    Click Button    css: .button.primary
-    Wait Until Page Contains Element    css=div.text-critical.py-4
-
-
 Créer produit
-    Login Success
+    Login Admin Success    ${USER}    ${PASSWORD}
+    
+    #Aller sur la page des produits
     Wait Until Element Is Visible    xpath=//a[contains(., 'Products')]    5s
     Click Element                    xpath=//a[contains(., 'Products')]
-    Location Should Be    ${PRODUCTS_URL}
+    Location Should Be    ${URL_PRODUCTS}
     Click Link    New Product
-    Location Should Be    ${NEW_PRODUCT_URL}
+    Location Should Be    ${URL_NEW_PRODUCT}
+    
     # Remplir les champs
     Input Text    id=name        ${P_NAME}
     Input Text    id=sku         ${P_SKU}
