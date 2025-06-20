@@ -8,9 +8,14 @@ Resource    ../Ressources/create_order.robot
 Resource    ../Ressources/login_user.robot
 Resource    ../Ressources/browser.robot
 
+
+*** Variables ***
+
+
+
 *** Test Cases ***
 
-Order
+Commander
     Ouvrir Navigateur Personnalisé
     #CONNEXION CLIENT
     Login Client Success    ${USER_CLIENT}    ${PASSWORD_CLIENT}
@@ -26,5 +31,8 @@ Order
     Choisir Paiement Stripe
     Remplir Coordonnées Carte
     Valider Commande
-    Vérifier Résultat Paiement
+    ${numCommande} =    Vérifier Résultat Paiement
+    #Vérification côté admin
+    Vérifier Paiement de la Commande    ${numCommande}
     Fermer Navigateur Personnalisé
+    

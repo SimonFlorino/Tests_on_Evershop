@@ -15,5 +15,7 @@ ${PASSWORD}    admin123
 ${USER_CLIENT}        simon@simon.com
 ${PASSWORD_CLIENT}    simon123
 
+
+
 #Variables Selenium
 ${BY}    selenium.webdriver.common.by.By

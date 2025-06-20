@@ -1,11 +1,11 @@
 *** Settings ***
 Library    SeleniumLibrary
 Library    Collections
-Library    BuiltIn
+Library    String
 
 Resource    ../Ressources/login_admin.robot
 Resource    ../Ressources/create_product.robot
-Resource    ../Ressources/variables_environnement.robot
+Resource    ../Ressources/browser.robot
 
 
 *** Variables ***
@@ -24,6 +24,7 @@ ${CARD_EXPIRY}       12/30
 ${CARD_CVC}          123
 ${PAYMENT_SUCCESS}   True
 ${has_address}=     Set Variable    False
+
 
 *** Keywords ***
 
@@ -90,23 +91,46 @@ Remplir Coordonnées Carte
 
 Valider Commande
     Wait Until Element Is Visible    xpath=//button[span[text()="Place Order"]]    timeout=10s
+    Scroll Element Into View    xpath=//button[span[text()="Place Order"]]
     Click Button    xpath=//button[span[text()="Place Order"]]
 
 Vérifier Résultat Paiement
-    Run Keyword If    '${PAYMENT_SUCCESS}' == 'True'    Vérifier Confirmation Commande
-    ...    ELSE    Vérifier Erreur Paiement
+    IF    '${PAYMENT_SUCCESS}' == 'True'
+        ${Order_number}=    Vérifier Confirmation Commande
+    ELSE
+        Vérifier Erreur Paiement
+        ${Order_number}=    Set Variable    0
+    END
+    RETURN    ${Order_number}
 
 Vérifier Confirmation Commande
-    Wait Until Element Is Visible    xpath=//div[@class="self-center" and .//span[contains(text(), "Order #")] and .//div[contains(text(), "Thank you")]]    timeout=10s
-    Element Should Be Visible    xpath=//div[@class="self-center" and .//span[contains(text(), "Order #")] and .//div[contains(text(), "Thank you")]]
-
-    
+    Wait Until Page Contains    Order #
+    ${full_text}=    Get Text    xpath=//div[@class="self-center"]/span
+    ${Order_number}=   Get Substring    ${full_text}    7
+    RETURN    ${Order_number}
 
 Vérifier Erreur Paiement
     Wait Until Element Is Visible    css=.toast-error
     ${error_text}=    Get Text    css=.toast-error
     Should Contain    ${error_text}    Payment failed
 
+Vérifier Paiement de la Commande
+    [Arguments]    ${number}
+    Ouvrir Navigateur Personnalisé
+    Login Admin Success    ${USER}    ${PASSWORD}
+    Wait Until Page Contains    Dashboard    timeout=10s
+    Wait Until Element Is Visible    xpath=//a[contains(text(), 'Orders')]    timeout=10s
+    Click Element    xpath=//a[contains(text(), 'Orders')]
+    Wait Until Element Is Visible    id=keyword    timeout=10s
+    Input Text    id=keyword    ${number}
+    Press Keys    id=keyword    ENTER
 
+    # Vérifier qu'il y a une seule ligne de commande (hors header et ligne vide)
+    ${rows}=    Get Element Count    xpath=//table[contains(@class,"listing")]//tbody/tr[.//a[contains(@href,"/admin/order/edit/")]]
+    Should Be Equal As Integers    ${rows}    1
 
-    
+    # Récupérer le texte de l'état de paiement (6e colonne)
+    ${payment_status}=    Get Text    xpath=//table[contains(@class,"listing")]//tbody/tr[.//a[contains(@href,"/admin/order/edit/")]]/td[6]//span[contains(@class,"title")]
+
+    # Vérifier que le paiement est "Authorized" (ou autre valeur attendue)
+    Should Be Equal    ${payment_status}    Authorized
