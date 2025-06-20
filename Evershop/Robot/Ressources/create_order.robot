@@ -134,3 +134,4 @@ Vérifier Paiement de la Commande
 
     # Vérifier que le paiement est "Authorized" (ou autre valeur attendue)
     Should Be Equal    ${payment_status}    Authorized
+    Fermer Navigateur Personnalisé

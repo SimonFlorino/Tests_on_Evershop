@@ -32,7 +32,8 @@ Commander
     Remplir Coordonnées Carte
     Valider Commande
     ${numCommande} =    Vérifier Résultat Paiement
+    Fermer Navigateur Personnalisé
     #Vérification côté admin
     Vérifier Paiement de la Commande    ${numCommande}
-    Fermer Navigateur Personnalisé
+    
     
