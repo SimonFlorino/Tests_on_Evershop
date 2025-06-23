@@ -23,7 +23,7 @@ ${CARD_NUMBER}       4242424242424242
 ${CARD_EXPIRY}       12/30
 ${CARD_CVC}          123
 ${PAYMENT_SUCCESS}   True
-${has_address}=     Set Variable    False
+${has_address}=      Set Variable    False
 
 
 *** Keywords ***
