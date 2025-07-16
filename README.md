@@ -1,6 +1,6 @@
 ## Différents tests automatisés effectués sur le site d'Evershop
 Prérequis :
-  - install Docker et importer le projet dans un conteneur
+  - install Docker et importer le projet dans un conteneur [(forked from evershop)](https://github.com/SimonFlorino/evershop )
   - créer un profil administrateur (commande dans le conteneur de Docker)
   - créer un profil client (sur le site en lui même)
 
